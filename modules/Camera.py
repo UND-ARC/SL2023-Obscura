@@ -27,4 +27,5 @@ while not done:
     pygame.display.flip()
     clock.tick(fps)
 
+webcam.stop()
 pygame.quit()
