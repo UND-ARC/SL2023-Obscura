@@ -11,14 +11,21 @@ WIP
 - 9-DoF Fusion IMU (Adafruit BNO055)
 - Serial Servo (MX-12W Robotis)
 ### Dependencies
+- PyCharm
+- Python 3.11.1
+    - NumPy 1.23.5
+    - Pygame 2.1.3dev8
+    - PyRTLSDR 0.2.93
+    - SciPy 1.9.3
+
 ## Version History
 ### Alpha 0.1
-Coding independent modules to later combine using a statemachine.
+Coding independent modules to later combine using a state machine.
 ## Authors
 - [Neko'z](mailto:zachariah.palmer@und.edu)
 - [Galbatorix](mailto:mason.motschke@und.edu)
 - [JRLemker](mailto:joseph.lemker@und.edu)
 ## License
-[MIT](LICENSE)
+The ARC Obscura Module is licensed under the terms of the [MIT License](LICENSE).
 ## Acknologements
 WIP
