@@ -15,10 +15,10 @@ WIP
 ### Alpha 0.1
 Coding independent modules to later combine using a statemachine.
 ## Authors
-- [Neko'z](zachariah.palmer@und.edu)
-- [Galbatorix](mason.motschke@und.edu)
-- [JRLemker](joseph.lemker@und.edu)
+- [Neko'z](mailto:zachariah.palmer@und.edu)
+- [Galbatorix](mailto:mason.motschke@und.edu)
+- [JRLemker](mailto:joseph.lemker@und.edu)
 ## License
-[MIT](LICENSE.md)
+[MIT](LICENSE)
 ## Acknologements
 WIP
