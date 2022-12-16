@@ -186,14 +186,13 @@ class Camera:
             image.name += letter
         image.name += '.jpg'
 
-        # render timestamp string into an graphic
-        stamp = self.font.render(text, True, (255, 0, 0))
+        # render timestamp string into a graphic
+        stamp = self.font.render(text, True, (0, 0, 0))
 
         # create a background image slightly bigger then the timestamp graphic
-        background = pygame.Surface(
-            (stamp.get_width() + _Padding * 2, stamp.get_height() + _Padding * 2))  # set background size
-        # background.set_alpha(128)  # set background transparency
-        background.fill((255, 255, 255))  # set background color
+        background = pygame.Surface((stamp.get_width() + _Padding * 2, stamp.get_height() + _Padding * 2))  # set background size
+        background.set_alpha(200)  # set background transparency
+        background.fill((255, 255, 255))  # set background color to white
 
         # draw the background onto the camera graphic
         image.blit(background, (0, image.get_height() - background.get_height()))
