@@ -208,7 +208,6 @@ class Camera:
         self.camera.stop()
 
         _CurrentConnections.remove(self)  # remove camera from active connection list
-        print(_CameraStopsPygame)
         if len(_CurrentConnections) == 0 and _CameraStopsPygame:
             pygame.quit()  # close pygame if no cameras are active
 
