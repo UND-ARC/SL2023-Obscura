@@ -10,14 +10,17 @@ filters and automatically timestamps fetched images.
 :status: in progress
 """
 
-
 # Import Dependencies
 import pygame.camera
 import datetime
+import os
 
 # Global Variables and Constants
 _CurrentConnections = []  # keeps track of all active cameras
 _CameraStopsPygame = True  # stop pygame library when no cameras are connected
+_Padding = 3  # spacing between font and background in pixels
+_SavePath = '../data/'  # directory to save images relative to module
+_Id = 0  # id numbers for name collision avoidance
 
 
 # Camera Module Functions
@@ -35,6 +38,7 @@ def listCameras():
     :rtype list[str]:
     """
     initPygame()
+
     print("Available Cameras:")
     cameras = pygame.camera.list_cameras()
     i = 0
@@ -46,6 +50,48 @@ def listCameras():
 
 
 # Camera Module Classes
+class Image(pygame.Surface):
+    """a class that holds the image data fetched by the camera
+
+    Will record the name and metadata captured by the
+
+    :param surface: pygame image surface containing raw image
+    :type surface: pygame.Surface
+    """
+    def __init__(self, surface):
+        super().__init__(surface.get_size())
+        self.blit(surface, (0, 0))
+        self.name = ''
+        global _Id
+        self.id = _Id
+        _Id += 1
+
+    def setName(self, name):
+        """Sets the filename
+
+        :param name: the filename
+        :type name: str
+        """
+        self.name = name
+
+    def getName(self):
+        """Gets the current filename attached to the image
+
+        :returns: the filename
+        :rtype str:
+        """
+        return self.name
+
+    def save(self):
+        """Saves the image to the filesystem
+
+        Uses the save path variable and the attached filename to save the image data and metadata to the filesystem.
+        """
+        initPygame()
+        pygame.image.save_extended(self, _SavePath + str(self.id) + '-' + self.name)
+        # TODO: add metadata support
+
+
 class Camera:
     """a class for attached cameras with automatic timestamping
 
@@ -55,7 +101,6 @@ class Camera:
     :param device: the index of the camera from the available camera list
     :type device: int
     """
-
     def __init__(self, device=0):
         # initialize pygame library
         initPygame()
@@ -109,8 +154,8 @@ class Camera:
     def getImage(self, prefix='', suffix='', sep=' '):
         """retrieves and timestamps an image from the camera
 
-        Gets an image from the initialized camera. Also gets the current time in the format m/d/Y H:M:S and combines it
-        using the prefix, suffix, and sep keyword arguments. Renders the timestamp on to the image with a white
+        Gets an image from the initialized camera. Also gets the current time in the format m/d/Y H:M:S and combines
+        it using the prefix, suffix, and sep keyword arguments. Renders the timestamp on to the image with a white
         background. Timestamp will be in lower left corner of image.
 
         :param prefix: leading string of timestamp
@@ -123,7 +168,7 @@ class Camera:
         :rtype Surface:
         """
         # get image from camera
-        image = self.camera.get_image()
+        image = Image(self.camera.get_image())
 
         # create timestamp string
         text = ''
@@ -133,11 +178,20 @@ class Camera:
         if len(suffix) > 0:
             text += sep + suffix
 
+        # use timestamp to generate name
+        special = {'/': '-', ':': '-', ' ': '_'}  # mapping from characters used in filesystem to acceptable alternative
+        for letter in text:
+            if letter in special:
+                letter = special[letter]
+            image.name += letter
+        image.name += '.jpg'
+
         # render timestamp string into an graphic
         stamp = self.font.render(text, True, (255, 0, 0))
 
         # create a background image slightly bigger then the timestamp graphic
-        background = pygame.Surface((stamp.get_width() + 3, stamp.get_height() + 3))  # set background size
+        background = pygame.Surface(
+            (stamp.get_width() + _Padding * 2, stamp.get_height() + _Padding * 2))  # set background size
         # background.set_alpha(128)  # set background transparency
         background.fill((255, 255, 255))  # set background color
 
@@ -145,9 +199,8 @@ class Camera:
         image.blit(background, (0, image.get_height() - background.get_height()))
 
         # draw the timestamp onto the camera image
-        image.blit(stamp, (0, image.get_height() - stamp.get_height()))
+        image.blit(stamp, (_Padding, image.get_height() - stamp.get_height() - _Padding))
 
-        # TODO: create image class with built-in variables for remembering timestamp string and has methods for saving to the filesystem
         return image
 
     def stop(self):
@@ -181,6 +234,7 @@ if __name__ == '__main__':
     pygame.display.set_icon(icon)
     clock = pygame.time.Clock()  # create clock to track frame rate
     done = False
+    latestImage = None
 
     # disable the camera from stopping pygame
     _CameraStopsPygame = False
@@ -195,13 +249,13 @@ if __name__ == '__main__':
                 if event.key == pygame.K_ESCAPE:
                     done = True
                 elif event.key == pygame.K_SPACE:
-                    # save image here
-                    pass
+                    if latestImage != None:
+                        latestImage.save()
 
         # draw routine
         screen.fill((20, 20, 20))
-        img = cam.getImage(prefix='example', suffix='ABC')
-        screen.blit(img, (0, 0))
+        latestImage = cam.getImage(prefix='example', suffix='ABC')
+        screen.blit(latestImage, (0, 0))
 
         # update buffer
         pygame.display.flip()
