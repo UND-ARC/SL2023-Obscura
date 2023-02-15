@@ -1,9 +1,9 @@
 """A streamlined interface for generic cameras
 
-A simplified way to connect and manage a integrated or USB camera via the pygame library. This also implements the
+A simplified way to connect and manage an integrated or USB camera via the pygame library. This also implements the
 filters and automatically timestamps fetched images.
 
-:authors: [RJLemker, Neko'z]
+:authors: [JRLemker, Neko'z]
 :date: December 14, 2022
 :organization: UND Advanced Rocketry Club (ARC)
 :version: 1.0
